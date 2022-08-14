@@ -1,0 +1,27 @@
+{
+  "name": "xmlrpc-brute",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ibnusyawall/xmlrpc-brute.git"
+  },
+  "keywords": [],
+  "author": "ibnusyawall",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ibnusyawall/xmlrpc-brute/issues"
+  },
+  "homepage": "https://github.com/ibnusyawall/xmlrpc-brute#readme",
+  "dependencies": {
+    "ansi-colors": "^4.1.3",
+    "asciify": "^1.3.5",
+    "axios": "^0.27.2",
+    "x2js": "^3.4.3",
+    "yargs": "^17.5.1"
+  }
+}

@@ -1,0 +1,7 @@
+<methodCall>
+<methodName>wp.getUsersBlogs</methodName>
+<params>
+<param><value>{username}</value></param>
+<param><value>{password}</value></param>
+</params>
+</methodCall>
