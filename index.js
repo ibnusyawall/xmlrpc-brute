@@ -94,6 +94,10 @@ if (!(pathSiteList && pathUserList && pathPassList)) {
     main();
 }
 
+!fs.existsSync(pathTo() + '/' + 'result.json') ? fs.writeFileSync('result.json', JSON.stringify([])) : [];
+
+var results = fs.readFileSync('result.json', 'utf-8');
+
 async function main() {
     asciify('xmlrpc-brute', {
         font: 'puffy'
@@ -161,10 +165,18 @@ async function main() {
                                 type: info,
                                 color: blue
                             }));
-                            console.log('Success Loggedin\n'.ansii({
+                            console.log('Success Loggedin'.ansii({
                                 type: check,
                                 color: green
-                            }));
+                            }), '-> writed to file result.json\n');
+
+                            results.push({
+                                url,
+                                username: listUser[u],
+                                password: listUser[p]
+                            });
+
+                            fs.writeFileSync('result.json', JSON.stringify(results));
                         } catch ({
                             message
                         }) {
