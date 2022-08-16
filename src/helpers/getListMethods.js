@@ -17,7 +17,8 @@ const getListMethods = function(url) {
             });
         } catch (e) {
             reject({
-                status: false
+                status: false,
+                message: `Site not vuln: ${url}`
             });
         } finally {
             resolve({
