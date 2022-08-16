@@ -2,3 +2,4 @@ node_modules/
 bulk/
 *-lock.json
 *.txt
+result.json
