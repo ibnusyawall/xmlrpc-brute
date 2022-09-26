@@ -15,7 +15,7 @@ const checkWp = function(url) {
 
             var meta = $('meta[name="generator"]').attr('content');
             var isMetaWp = /WordPress/i.test(meta);
-            if (!!isMetaWp) {
+            if (!!isMetaWp || meta) {
                 resolve({
                     status: true,
                     version: meta
